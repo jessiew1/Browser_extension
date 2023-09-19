@@ -1,0 +1,68 @@
+Go to Amazon EC2.
+Select Ubuntu Server 20.04 LTS (HVM). You might want to use the search bar to find the correct Amazon Machine Image. See p2.PNG to see what the page should look like.
+Select t2.micro (free tier eligible).
+Click 4. Add Storage.
+Set Size to 20 GiB.
+Click 7. Review.
+Ensure that there is no warning at the top that you have set some setting that is not free tier eligible.
+Click the blue Launch button at the bottom right.
+The website will prompt you to select an existing keypair or create a new keypair.
+	This keypair is used to authenticate yourself when SSHing into the AWS server.
+	Whichever keypair you use here, have the private key as a file on your computer.
+Find your newly started instance in the instances page.
+Find its Public IPv4 DNS. It should look something like ec2-54-152-142-187.compute-1.amazonaws.com.
+	See p13.PNG for a picture of where to find the Public IPv4 DNS from the AWS website.
+In a terminal, run the command ssh -i keyfile.pem ubuntu@ec2-54-152-142-187.compute-1.amazonaws.com, but replace keyfile.pem with your private key file from line 9 and ec2-54-152-142-187.compute-1.amazonaws.com with your Public IPv4 DNS from line 13. Note the ubuntu@ before the Public IPv4 DNS. It is necessary.
+	It may ask you if you recognize a key fingerprint or wish to trust it. Type yes.
+You should now be ssh'ed into your EC2 instance. Run the command ls -al to test.
+Install node.js on the AWS server using the instructions at https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html.
+Install express-generator using the command npm install -g express-generator.
+Create an Express project named RoutingServerExpress using the command express RoutingServerExpress.
+cd RoutingServerExpress
+npm install
+npm start
+On the AWS EC2 website, go to Security Groups.
+Click Create security group.
+In the Security group name text field, type Express Server.
+In the Description text field, type Opens Port 3000.
+In the Inbound Rules, add rules according to p28.PNG.
+At the bottom of the page, click Create security group.
+Go back to the instances page. Select your instance so that it has a blue checkmark next to it. Click Actions. Click Security. Click Change security groups.
+Under Associated security groups, in the search box, type Express Server and click on the search result from the dropdown menu. Click Add security group. Click Save.
+Go back to the instances page and find the AWS server's Public IPv4 address.
+In your web browser, go to 44.202.98.206:3000, except replace 44.202.98.206 with the AWS server's Public IPv4 address.
+Ensure that the web browser displays a simple web page with the text Express Welcome to Express.
+In the terminal where you typed npm start in line 23, ensure that it has printed Get / 200 to indicate the HTTP request that it received from your web browser.
+Hit CTRL+C in the terminal to stop the server.
+Move all the files and folders from this repository's AWSRoutingServer/ExpressHTTPServer/RoutingServerExpress/ into the AWS server's directory RoutingServerExpress that was cd'd into in line 21. If a file exists at the destination on the AWS server, overwrite it.
+	You can copy files from your machine to the AWS server using the scp command. If you use scp, it may be wise to compress the directory into a single file first, since scp has some overhead for every file transferred.
+You have now installed the routing server code on the AWS server.
+
+To run the routing server, cd into the RoutingServerExpress directory and run npm start.
+To stop the routing server, hit CTRL+C.
+
+To modify the code of the routing server, you would likely want to modify the files RoutingServerExpress/app.js and RoutingServerExpress/routes/index.js.
+
+# # The old commands to install node.js are below.
+# # Download and install NodeJS LTS
+# curl -sL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+# sudo apt-get install -y nodejs
+
+# # The old commands to install MongoDB, the database, are below.
+# # Download MongoDB
+# wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+# echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+# sudo apt-get update
+# sudo apt-get install -y mongodb-org
+
+# # Start MongoDB
+# sudo systemctl start mongod
+# sudo systemctl daemon-reload
+# sudo systemctl status mongod
+# sudo systemctl enable mongod
+
+# # # This is how you stop MongoDB
+# # sudo systemctl stop mongod
+
+# # # This is how you restart MongoDB
+# # sudo systemctl restart mongod

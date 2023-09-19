@@ -1,0 +1,17 @@
+You will need to obtain a credentials file, so read ObtainingCredentialsFile.txt.
+
+Launch 3 instances of Ubuntu Server 20.04 LTS using instance type T3.medium with 20 GB of storage.
+Configure their security groups to allow the rules according to InboundRules.PNG and OutboundRules.PNG.
+	Port 29500 is the default port that Crypten compute parties use to communicate.
+		This default port number is specified in aws_launcher.py.
+SSH into each AWS server. Run the following commands.
+
+sudo apt update
+sudo apt install python3-pip --yes
+pip3 install crypten --no-cache-dir
+pip3 install torch==1.9.0
+
+Your AWS server is now ready to use with aws_runner.sh.
+Read the comments at the top of aws_runner.sh.
+
+Don't forget to terminate AWS servers in the AWS instances page when you no longer need them.

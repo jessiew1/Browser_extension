@@ -1,0 +1,38 @@
+const _sodium = require('libsodium-wrappers');
+(async() => {
+  await _sodium.ready;
+  const sodium = _sodium;
+  
+  const keypair = sodium.crypto_box_keypair();
+  const public_key = keypair.publicKey;
+  const private_key = keypair.privateKey;
+  
+  console.log(`${keypair.keyType}`);
+  console.log(`${JSON.stringify(public_key)}`);
+  console.log(`${JSON.stringify(private_key)}`);
+  console.log(`${sodium.crypto_box_seal}`);
+  console.log(`${sodium.crypto_box_seal_open}`);
+  
+  // Select message
+  const m = 'message1'
+  const mb = sodium.from_string(m)
+  
+  // Encrypt
+  const c = sodium.crypto_box_seal(mb, public_key)
+  
+  // Decrypt
+  const rb = sodium.crypto_box_seal_open(c, public_key, private_key)
+  const r = sodium.to_string(rb)
+  
+  // Assert correctness
+  if (m != r) {
+    throw 'm != r'
+  }
+  
+  console.log(m)
+  console.log(r)
+  console.log(sodium.to_base64(m))
+  console.log(sodium.to_base64(r))
+  console.log(sodium.from_base64(sodium.to_base64(m)))
+  console.log(sodium.from_base64(sodium.to_base64(r)))
+})();
